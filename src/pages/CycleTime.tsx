@@ -154,9 +154,8 @@ export default function CycleTime() {
                     </tr>
                   )
                 })}
-              </tbody>
-            </table>
-          </div>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
