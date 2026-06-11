@@ -1,10 +1,5 @@
-import { DaysToAcceptChart } from '../components/Charts'
-import { offers, getOutcome, isRetained } from '../data/offers'
+import { DaysToAcceptChart, OfferToAcceptScatterChart } from '../components/Charts'
 import {
-  offerToAcceptDays,
-  acceptToStartDays,
-  offerToStartDays,
-  isSenior,
   medianOfferToAccept,
   avgOfferToAccept,
   minOfferToAccept,
@@ -18,13 +13,8 @@ import {
   avgSeniorO2A,
   avgJuniorO2A,
 } from '../utils/metrics'
-import { formatDateShort } from '../utils/dates'
 
 export default function CycleTime() {
-  const accepted = offers.filter(
-    (r) => getOutcome(r) === 'Accepted' || getOutcome(r) === 'Withdrew'
-  )
-
   return (
     <div>
       <div className="topbar">
@@ -32,7 +22,6 @@ export default function CycleTime() {
         <span className="topbar-badge">Median O→A: {medianOfferToAccept}d</span>
       </div>
 
-      {/* Speed Summary Cards */}
       <div className="kpi-strip">
         <div className="kpi-card">
           <span className="kpi-label">Med Offer → Accept</span>
@@ -56,7 +45,6 @@ export default function CycleTime() {
         </div>
       </div>
 
-      {/* Days to Accept Distribution + Speed by Seniority */}
       <div className="grid-2">
         <div className="card">
           <div className="card-header">
@@ -68,95 +56,39 @@ export default function CycleTime() {
           <div className="card-header">
             <h2 className="card-title">Speed by Seniority</h2>
           </div>
-          <div className="table-container">
-            <table>
-              <thead>
-                <tr>
-                  <th>Metric</th>
-                  <th>Senior (IC4+)</th>
-                  <th>Junior (IC2-3)</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Median O→A</td>
-                  <td className="text-mono">{medianSeniorO2A} days</td>
-                  <td className="text-mono">{medianJuniorO2A} days</td>
-                </tr>
-                <tr>
-                  <td>Average O→A</td>
-                  <td className="text-mono">{avgSeniorO2A.toFixed(1)} days</td>
-                  <td className="text-mono">{avgJuniorO2A.toFixed(1)} days</td>
-                </tr>
-              </tbody>
-            </table>
+          <div style={{ padding: '1rem' }}>
+            <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
+              <div style={{ flex: 1, background: 'var(--bg-surface)', borderRadius: 'var(--radius-md)', padding: '0.85rem', textAlign: 'center' }}>
+                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600, marginBottom: '0.35rem' }}>Senior (IC4+) Median</div>
+                <div style={{ fontSize: '2rem', fontWeight: 800, color: '#a855f7', fontFamily: 'var(--font-mono)' }}>{medianSeniorO2A}d</div>
+                <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>Avg {avgSeniorO2A.toFixed(1)}d</div>
+              </div>
+              <div style={{ flex: 1, background: 'var(--bg-surface)', borderRadius: 'var(--radius-md)', padding: '0.85rem', textAlign: 'center' }}>
+                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600, marginBottom: '0.35rem' }}>Junior (IC2-3) Median</div>
+                <div style={{ fontSize: '2rem', fontWeight: 800, color: '#6366f1', fontFamily: 'var(--font-mono)' }}>{medianJuniorO2A}d</div>
+                <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>Avg {avgJuniorO2A.toFixed(1)}d</div>
+              </div>
+            </div>
+            <p className="text-muted" style={{ fontSize: '0.8rem' }}>
+              Senior candidates (IC4+) had a median offer-to-accept time of{' '}
+              <strong>{medianSeniorO2A} days</strong> vs.{' '}
+              <strong>{medianJuniorO2A} days</strong> for junior candidates — indicating
+              that even at higher complexity levels, candidate decision velocity remained
+              strong.
+            </p>
           </div>
-          <p className="text-muted mt-2" style={{ fontSize: '0.8rem' }}>
-            Senior candidates (IC4+) had a median offer-to-accept time of{' '}
-            <strong>{medianSeniorO2A} days</strong> vs.{' '}
-            <strong>{medianJuniorO2A} days</strong> for junior candidates — indicating
-            that even at higher complexity levels, candidate decision velocity remained
-            strong.
-          </p>
         </div>
       </div>
 
-      {/* Detail table */}
       <div className="card">
         <div className="card-header">
-          <h2 className="card-title">Offer → Accept Detail</h2>
+          <h2 className="card-title">Individual Offer → Accept Times by Career Stage</h2>
         </div>
-        <div className="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Candidate</th>
-                <th>Org</th>
-                <th>Stage</th>
-                <th>Offer Extended</th>
-                <th>Accepted</th>
-                <th>O→A (d)</th>
-                <th>Start</th>
-                <th>A→S (d)</th>
-                <th>O→S (d)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {accepted
-                .sort((a, b) => a.offerExtendedDate.localeCompare(b.offerExtendedDate))
-                .map((r) => {
-                  const o2a = offerToAcceptDays(r)
-                  const a2s = acceptToStartDays(r)
-                  const o2s = offerToStartDays(r)
-                  return (
-                    <tr key={r.candidateId}>
-                      <td className="text-mono">{r.candidateId}</td>
-                      <td>
-                        <span className={`badge ${r.org === 'Cloud + AI' ? 'badge-cloud' : 'badge-mdq'}`}>
-                          {r.org}
-                        </span>
-                      </td>
-                      <td>
-                        <span className={`badge ${isSenior(r) ? 'badge-senior' : 'badge-junior'}`}>
-                          {r.careerStage}
-                        </span>
-                      </td>
-                      <td className="text-mono">{formatDateShort(r.offerExtendedDate)}</td>
-                      <td className="text-mono">
-                        {r.offerAcceptedDate ? formatDateShort(r.offerAcceptedDate) : '—'}
-                      </td>
-                      <td className="text-mono">{o2a !== null ? o2a : '—'}</td>
-                      <td className="text-mono">
-                        {r.startDate ? formatDateShort(r.startDate) : '—'}
-                      </td>
-                      <td className="text-mono">{a2s !== null ? a2s : '—'}</td>
-                      <td className="text-mono">{o2s !== null ? o2s : '—'}</td>
-                    </tr>
-                  )
-                })}
-            </tbody>
-          </table>
-        </div>
+        <OfferToAcceptScatterChart />
+        <p className="text-muted mt-2" style={{ fontSize: '0.8rem' }}>
+          Each point represents one confirmed hire. Hover for candidate details. Senior
+          roles (IC4+) span a wider decision range while maintaining strong median velocity.
+        </p>
       </div>
     </div>
   )

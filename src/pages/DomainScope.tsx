@@ -1,4 +1,5 @@
 import DomainCards from '../components/DomainCards'
+import { PortfolioExpansionTimeline } from '../components/Charts'
 import { domains } from '../data/context'
 
 export default function DomainScope() {
@@ -9,7 +10,6 @@ export default function DomainScope() {
         <span className="topbar-badge">{domains.length} Domains</span>
       </div>
 
-      {/* Complexity Narrative */}
       <div className="card">
         <div className="card-header">
           <h2 className="card-title">Complexity Narrative</h2>
@@ -25,30 +25,21 @@ export default function DomainScope() {
           </p>
           <p>
             Recruiting for these domains requires deep sourcing expertise in areas with
-            <em>extremely limited candidate pools</em> — quantum physicists, ASIC/FPGA
+            <em> extremely limited candidate pools</em> — quantum physicists, ASIC/FPGA
             engineers, AI research scientists, roboticists, and autonomous systems
             architects. Each domain carries its own technical lexicon, stakeholder
-            ecosystem, and competitive landscape (competing against Google, Amazon,
-            NVIDIA, top research universities, and well-funded startups).
+            ecosystem, and competitive landscape.
           </p>
           <p>
             The increasing specialization meant that <strong>each new requisition required
             deeper upfront investment</strong> in stakeholder education, market mapping,
-            and sourcing strategy development. The transition from generalist Cloud
-            infrastructure roles to deeply specialized Quantum and Robotics roles
-            occurred while maintaining existing pipeline momentum — a dual-track
-            execution challenge.
-          </p>
-          <p>
-            Portfolio expansion also multiplied the <strong>stakeholder surface area</strong>:
-            each new domain brought new hiring managers, new technical bar calibrations,
-            and new compensation benchmarks — all of which required dedicated ramp time
-            within an already constrained operating environment.
+            and sourcing strategy development. Portfolio expansion also multiplied the{' '}
+            <strong>stakeholder surface area</strong>: each new domain brought new hiring
+            managers, new technical bar calibrations, and new compensation benchmarks.
           </p>
         </div>
       </div>
 
-      {/* Domain Cards */}
       <div className="card">
         <div className="card-header">
           <h2 className="card-title">Domain Overview</h2>
@@ -56,62 +47,11 @@ export default function DomainScope() {
         <DomainCards />
       </div>
 
-      {/* Portfolio Expansion Timeline */}
       <div className="card">
         <div className="card-header">
-          <h2 className="card-title">Portfolio Expansion Map</h2>
+          <h2 className="card-title">Portfolio Expansion Timeline</h2>
         </div>
-        <div className="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Domain</th>
-                <th>Entered Portfolio</th>
-                <th>Specialization Level</th>
-                <th>Candidate Pool</th>
-                <th>Key Challenge</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  <span className="badge badge-cloud">Azure Core & AI</span>
-                </td>
-                <td>Jul 2025 (Day 1)</td>
-                <td>High</td>
-                <td>Moderate</td>
-                <td>Competing with AWS/GCP for top cloud talent</td>
-              </tr>
-              <tr>
-                <td>
-                  <span className="badge badge-mdq">Quantum Computing</span>
-                </td>
-                <td>Nov 2025</td>
-                <td>Extreme</td>
-                <td>Very Small</td>
-                <td>Global scarcity of qualified quantum researchers</td>
-              </tr>
-              <tr>
-                <td>
-                  <span className="badge badge-mdq">AI for Science</span>
-                </td>
-                <td>Jan 2026</td>
-                <td>Extreme</td>
-                <td>Very Small</td>
-                <td>Intersection of AI/ML + domain science expertise</td>
-              </tr>
-              <tr>
-                <td>
-                  <span className="badge badge-mdq">Robotics</span>
-                </td>
-                <td>Feb 2026</td>
-                <td>Extreme</td>
-                <td>Small</td>
-                <td>Multi-disciplinary: HW, SW, AI, embedded systems</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <PortfolioExpansionTimeline />
       </div>
     </div>
   )
