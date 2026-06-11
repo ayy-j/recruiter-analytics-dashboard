@@ -14,7 +14,7 @@ import {
   type PhaseMetrics,
 } from '../utils/metrics'
 import { phases } from '../data/context'
-import { type OfferRecord, getOutcome } from '../data/offers'
+import { offers, type OfferRecord, getOutcome } from '../data/offers'
 import { formatDateShort } from '../utils/dates'
 
 const CHART_COLORS = ['#6366f1', '#22c55e', '#f59e0b', '#ef4444', '#06b6d4', '#a855f7', '#3b82f6']
@@ -51,13 +51,12 @@ export function FunnelVisual({ stages }: {
 // ── Offer Outcomes Doughnut ─────────────────────────────────
 
 export function OfferOutcomesChart() {
-  const counts = {
+  const counts: Record<string, number> = {
     Accepted: 0,
     Declined: 0,
     Withdrew: 0,
     Pending: 0,
   }
-  const { offers } = require('../data/offers')
   for (const r of offers) {
     counts[getOutcome(r)]++
   }
@@ -308,7 +307,7 @@ export function LevelDistributionChart() {
           }}
         />
         <Bar dataKey="count" name="Hires" radius={[4, 4, 0, 0]}>
-          {data.map((entry, i) => (
+          {data.map((entry) => (
             <Cell
               key={entry.label}
               fill={entry.level >= 64 ? '#a855f7' : '#6366f1'}
@@ -323,7 +322,11 @@ export function LevelDistributionChart() {
 // ── Senior Share Over Time ──────────────────────────────────
 
 export function SeniorShareChart() {
-  const data = getMonthlySeniorShare()
+  const rawData = getMonthlySeniorShare()
+  const data = rawData.map((d) => ({
+    ...d,
+    junior: d.total - d.senior,
+  }))
   return (
     <ResponsiveContainer width="100%" height={300}>
       <BarChart data={data}>
@@ -349,7 +352,7 @@ export function SeniorShareChart() {
           }}
           formatter={(value: number, name: string) => {
             if (name === 'pct') return [`${value.toFixed(0)}%`, 'Senior Share']
-            return [value, name]
+            return [value, name === 'junior' ? 'IC2-IC3' : name === 'senior' ? 'IC4+' : name]
           }}
         />
         <Bar dataKey="junior" stackId="a" name="IC2-IC3" fill="#6366f1" radius={[0, 0, 0, 0]} />
